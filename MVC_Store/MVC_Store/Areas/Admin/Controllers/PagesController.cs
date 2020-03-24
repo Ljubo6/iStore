@@ -278,5 +278,47 @@ namespace MVC_Store.Areas.Admin.Controllers
             }
         }
 
+        // GET: Admin/Pages/EditSidebar
+        [HttpGet]
+        public ActionResult EditSidebar()
+        {
+            //Обябяваме модела
+            SidebarVM model;
+            using (Db db = new Db())
+            {
+                //Получаваме данните от DTO
+                SidebarDTO dto = db.Sidebars.Find(1);//Лаянян код
+                //Запълваме модела
+                model = new SidebarVM(dto);
+            }
+            //Връщаме View  заедно с модела
+            return View(model);
+        }
+
+        // POST: Admin/Pages/EditSidebar
+        [HttpPost]
+        public ActionResult EditSidebar(SidebarVM model)
+        {
+            using (Db db = new Db())
+            {
+                //Взимаме данни от базата чрез DTO
+                SidebarDTO dto = db.Sidebars.Find(1); //Лаянян код
+
+                //Прицвияваме данните в тялото(в свойство body)
+                dto.Body = model.Body;
+
+                //Запис
+
+                db.SaveChanges();
+            }
+
+            TempData["SM"] = "You have edited sidebar";
+
+            //Присвояваме съобщение в TempData
+
+            //Преадресиране
+            return RedirectToAction("EditSidebar");
+        }
+
     }
 }
