@@ -229,5 +229,54 @@ namespace MVC_Store.Areas.Admin.Controllers
             return View(model);
         }
 
+
+        // GET: Admin/Pages/DeletePage/id
+        public ActionResult DeletePage(int id)
+        {
+            using (Db db = new Db())
+            {
+                //Почаваме страницата
+                PagesDTO dto = db.Pages.Find(id);
+
+                //Изтриваме страницата
+                db.Pages.Remove(dto);
+
+                //Записваме изменетияте в базата
+
+                db.SaveChanges();
+            }
+
+            //Добавяме съобщение за успешно изтриване
+            TempData["SM"] = "You have deleted a page";
+            //Преадресираме потребителя
+            return RedirectToAction("Index");
+        }
+
+
+
+        //Създаваме метод за сортиране
+        // POST: Admin/Pages/ReorderPages
+        [HttpPost]
+        public void ReorderPages(int[] id)
+        {
+            using (Db db = new Db())
+            {
+                //Реализираме начален брояч
+                int count = 1;
+                //Инициализираме модела за данни
+                PagesDTO dto;
+                //Правим сортировка за всяка страница
+                foreach (var pageId in id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+
+                    db.SaveChanges();
+                    count++;
+                }
+
+            }
+        }
+
     }
 }
