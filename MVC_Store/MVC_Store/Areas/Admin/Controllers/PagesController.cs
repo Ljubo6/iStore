@@ -256,6 +256,7 @@ namespace MVC_Store.Areas.Admin.Controllers
 
         //Създаваме метод за сортиране
         // POST: Admin/Pages/ReorderPages
+
         [HttpPost]
         public void ReorderPages(int[] id)
         {
