@@ -159,17 +159,16 @@ namespace MVC_Store.Areas.Admin.Controllers
             return View(model);
 
         }
-
         // POST: Admin/Shop/AddProduct
         [HttpPost]
-        public ActionResult AddProduct(ProductVM model,HttpPostedFile file)
+        public ActionResult AddProduct(ProductVM model, HttpPostedFileBase file)
         {
             //Проверяваме модела за валидност
             if (!ModelState.IsValid)
             {
                 using (Db db = new Db())
                 {
-                    model.Categories = new SelectList(db.Categories.ToList(),"Id","Name");
+                    model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
                     return View(model);
                 }
             }
@@ -180,7 +179,7 @@ namespace MVC_Store.Areas.Admin.Controllers
                 if (db.Products.Any(x => x.Name == model.Name))
                 {
                     model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
-                    ModelState.AddModelError("","This product name is taken");
+                    ModelState.AddModelError("", "This product name is taken");
                     return View(model);
                 }
             }
@@ -194,7 +193,7 @@ namespace MVC_Store.Areas.Admin.Controllers
                 ProductDTO product = new ProductDTO();
 
                 product.Name = model.Name;
-                product.Slug = model.Name.Replace(" ","-").ToLower();
+                product.Slug = model.Name.Replace(" ", "-").ToLower();
                 product.Description = model.Description;
                 product.Price = model.Price;
                 product.CategoryId = model.CategoryId;
@@ -217,8 +216,8 @@ namespace MVC_Store.Areas.Admin.Controllers
             //Създаваме необходимите линкове на директории
             var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
 
-            var pathString1 = Path.Combine(originalDirectory.ToString(),"Products");
-            var pathString2 = Path.Combine(originalDirectory.ToString(),"Products\\" + id.ToString());
+            var pathString1 = Path.Combine(originalDirectory.ToString(), "Products");
+            var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
             var pathString3 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
             var pathString4 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery");
             var pathString5 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs");
@@ -260,23 +259,23 @@ namespace MVC_Store.Areas.Admin.Controllers
                 {
                     using (Db db = new Db())
                     {
-                        model.Categories = new SelectList(db.Categories.ToList(),"Id","Name");
-                        ModelState.AddModelError("","The image was not uploaded - wrong image extension");
+                        model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+                        ModelState.AddModelError("", "The image was not uploaded - wrong image extension");
                         return View(model);
                     }
                 }
 
 
-                 //Обявяваме променлива с името на изображението
-                 string imageName = file.FileName;
+                //Обявяваме променлива с името на изображението
+                string imageName = file.FileName;
 
-                 //Записваме името на изображението в модела DTO
-                 using (Db db = new Db())
-                 {
-                     ProductDTO dto = db.Products.Find(id);
-                     dto.ImageName = imageName;
-                     db.SaveChanges();
-                 }
+                //Записваме името на изображението в модела DTO
+                using (Db db = new Db())
+                {
+                    ProductDTO dto = db.Products.Find(id);
+                    dto.ImageName = imageName;
+                    db.SaveChanges();
+                }
 
                 //Назначаваме пътя към оригиналното и  умаланото изображение
                 var path = string.Format($"{pathString2}\\{imageName}");
@@ -288,7 +287,7 @@ namespace MVC_Store.Areas.Admin.Controllers
 
                 //Създаваме и съхрабяваме умалено копие
                 WebImage img = new WebImage(file.InputStream);
-                img.Resize(200,200).Crop(1,1);
+                img.Resize(200, 200).Crop(1, 1);
                 img.Save(path2);
 
             }
