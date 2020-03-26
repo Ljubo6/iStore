@@ -139,5 +139,21 @@ namespace MVC_Store.Areas.Admin.Controllers
 
             return "ok";
         }
+
+        // GET: Admin/Shop/AddProduct
+        public ActionResult AddProduct()
+        {
+            //Обявяваме модела на данни
+            ProductVM model = new ProductVM();
+            //Добавяме списък на категориите от базата в модела
+            using (Db db = new Db())
+            {
+                model.Categories = new SelectList(db.Categories.ToList(),"id","Name");
+            }
+            //Връщаме модела във View -то
+
+            return View(model);
+
+        }
     }
 }
