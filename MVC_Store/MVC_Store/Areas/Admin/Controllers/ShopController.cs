@@ -112,5 +112,32 @@ namespace MVC_Store.Areas.Admin.Controllers
             //Преадресираме потребителя
             return RedirectToAction("Categories");
         }
+
+        // POST: Admin/Shop/RenameCategory/id
+        [HttpPost]
+        public string RenameCategory(string newCatName,int id)
+        {
+            using (Db db = new Db())
+            {
+
+                //Проверка името за уникалност
+                if (db.Categories.Any(x => x.Name == newCatName))
+                {
+                    return "titletaken";
+                }
+                //Получаваме модел DTO 
+                CategoryDTO dto = db.Categories.Find(id);
+                //Редактираме модела DTO
+                dto.Name = newCatName;
+                dto.Slug = newCatName.Replace(" ","-").ToLower();
+                //Запис на промените
+                db.SaveChanges();
+
+            }
+
+            //Връщаме дума(не е резултат)
+
+            return "ok";
+        }
     }
 }
