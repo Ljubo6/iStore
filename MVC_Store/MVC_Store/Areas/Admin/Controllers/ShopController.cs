@@ -1,5 +1,6 @@
 ﻿using MVC_Store.Models.Data;
 using MVC_Store.Models.ViewModels.Shop;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -162,7 +163,7 @@ namespace MVC_Store.Areas.Admin.Controllers
 
         // POST: Admin/Shop/AddProduct
         [HttpPost]
-        public ActionResult AddProduct(ProductVM model,HttpPostedFile file)
+        public ActionResult AddProduct(ProductVM model,HttpPostedFileBase file)
         {
             //Проверяваме модела за валидност
             if (!ModelState.IsValid)
@@ -298,6 +299,42 @@ namespace MVC_Store.Areas.Admin.Controllers
 
             return RedirectToAction("AddProduct");
         }
+
+        // Get: Admin/Shop/Product
+        [HttpGet]
+        public ActionResult Products(int? page,int? catId)
+        {
+            //Обявяваме ProductVM тип List
+            List<ProductVM> listOfProductVm;
+            //Установяваме номера на старницате
+            var pageNumber = page ?? 1;
+
+            using (Db db = new Db())
+            {
+                //Инициализираме list  и го пълним с данни
+                listOfProductVm = db.Products.ToArray()
+                    .Where(x => catId == null || catId == 0 || x.CategoryId == catId)
+                    .Select(x => new ProductVM(x))
+                    .ToList();
+
+                //Запълваме категориите с данни
+                ViewBag.Categories = new SelectList(db.Categories.ToList(),"Id","Name");
+
+                //Установяваме избраната категория
+                ViewBag.SelectedCat = catId.ToString();
+
+            }
+
+            //Установяваме навигация на страниците
+            var onePageOfProducts = listOfProductVm.ToPagedList(pageNumber,3);
+
+            ViewBag.onePageOfProducts = onePageOfProducts;
+
+            //Връщаме View с данните
+
+            return View(listOfProductVm);
+        }
+
 
     }
 }
