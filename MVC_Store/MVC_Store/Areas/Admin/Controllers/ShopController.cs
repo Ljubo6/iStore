@@ -335,7 +335,7 @@ namespace MVC_Store.Areas.Admin.Controllers
             return View(listOfProductVm);
         }
 
-        // GET: Admin/Shop/Product/id
+        // GET: Admin/Shop/EditProduct/id
         [HttpGet]
         public ActionResult EditProduct(int id)
         {
@@ -364,6 +364,70 @@ namespace MVC_Store.Areas.Admin.Controllers
             //Връщаме модела в View - то
             return View(model);
         }
+
+        // POST: Admin/Shop/EditProduct/
+        [HttpPost]
+        public ActionResult EditProduct(ProductVM model,HttpPostedFileBase file)
+        {
+            //Получаваме Id на продукта
+            int id = model.Id;
+
+            //Запълваме списъка на категориите и изобравенията
+            using (Db db = new Db())
+            {
+                model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+            }
+
+            model.GaleryImage = Directory
+                    .EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                    .Select(fn => Path.GetFileName(fn));
+
+            //Проверяваме модела на валидност
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            //Проверяваме името на продукта за уникалност
+
+            using (Db db = new Db())
+            {
+                if (db.Products.Where(x => x.Id != id).Any(x => x.Name == model.Name))
+                {
+                    ModelState.AddModelError("","That product name is taken!");
+                    return View(model);
+                }
+            }
+
+            //Обновяваме продукта
+            using (Db db = new Db())
+            {
+                ProductDTO dto = db.Products.Find(id);
+                dto.Name = model.Name;
+                dto.Slug = model.Name.Replace(" ","-").ToLower();
+                dto.Description = model.Description;
+                dto.Price = model.Price;
+                dto.CategoryId = model.CategoryId;
+                dto.ImageName = model.ImageName;
+
+                CategoryDTO catDTO = db.Categories.FirstOrDefault(x => x.Id == model.CategoryId);
+                dto.CategoryName = catDTO.Name;
+
+                db.SaveChanges();
+            }
+
+            //Правим цъобщение в TempData
+            TempData["SM"] = "You have edited the product";
+            //Логика на обработка на изобравенията
+            #region Image Upload
+            #endregion
+
+            //Преадресираме на потребител
+            return RedirectToAction("EditProduct");
+        }
+
+
 
 
     }
