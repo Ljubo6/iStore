@@ -335,6 +335,36 @@ namespace MVC_Store.Areas.Admin.Controllers
             return View(listOfProductVm);
         }
 
+        // GET: Admin/Shop/Product/id
+        [HttpGet]
+        public ActionResult EditProduct(int id)
+        {
+            //Обявяваме модела ProductVM
+            ProductVM model;
+            using (Db db = new Db())
+            {
+                //Получаваме продукта
+                ProductDTO dto = db.Products.Find(id);
+
+                //Проверяваме достъпен ли е продукта
+                if (dto == null)
+                {
+                    return Content("That product does not exist.");
+                }
+                //Инициализираме модела с данните
+                model = new ProductVM(dto);
+                //Създаваме списък с категориите
+                model.Categories = new SelectList(db.Categories.ToList(),"Id","Name");
+                //Получаваме всички изобравения от галерията
+                model.GaleryImage = Directory
+                    .EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                    .Select(fn => Path.GetFileName(fn));
+
+            }
+            //Връщаме модела в View - то
+            return View(model);
+        }
+
 
     }
 }
