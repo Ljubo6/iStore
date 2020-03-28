@@ -76,5 +76,21 @@ namespace MVC_Store.Controllers
             //Връщаме частично View с лист от данни
             return PartialView("_PagesMenuPartial", pageVMList);
         }
+
+        public ActionResult SidebarPartial()
+        {
+            //Обявяваме модел
+            SidebarVM model;
+            // Инициализираме модел
+            using (Db db = new Db())
+            {
+                SidebarDTO dto = db.Sidebars.Find(1);
+
+                model = new SidebarVM(dto);
+            }
+            //Връщаме модел с частично View
+            return PartialView("_SidebarPartial",model);
+        }
+
     }
 }
