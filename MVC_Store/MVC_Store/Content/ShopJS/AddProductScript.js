@@ -22,21 +22,6 @@ $(function () {
         readURL(this);
     });
 
-    /*-----------------------------------------------------------*/
+/*-----------------------------------------------------------*/
 
-    Dropzone.options.dropzoneFprm = {
-        acceptedFiles: "images/*",
-        init: function () {
-            this.on("complete",
-                function (file) {
-                    if (this.getUploadingFiles().length === 0 && this.getUploadingFiles().length === 0) {
-                        location.reload();
-                    }
-                });
-            this.on("sending",
-                function (file, xhr, formData) {
-                    formData.append("id",@Model.Id);
-                });
-        }
-    }
 });
