@@ -1,4 +1,5 @@
-﻿using MVC_Store.Models.ViewModels.Cart;
+﻿using MVC_Store.Models.Data;
+using MVC_Store.Models.ViewModels.Cart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,9 @@ namespace MVC_Store.Controllers
                     qty += item.Quantity;
                     price += item.Quantity * item.Price;
                 }
+
+                model.Quantity = qty;
+                model.Price = price;
             }
             else
             {
@@ -79,6 +83,101 @@ namespace MVC_Store.Controllers
             //Връщаме частично View с модела
 
             return PartialView("_CartPartial",model);
+        }
+
+        public ActionResult AddToCartPartial(int id)
+        {
+            //Обявяваме лист ,параметризиран от тим CartVM
+
+            List<CartVM> cart = Session["cart"] as List<CartVM> ?? new List<CartVM>();
+
+            //Обявяваме модел CartVM
+
+            CartVM model = new CartVM();
+
+           
+
+            using (Db db = new Db())
+            {
+                //Получаваме продукта
+
+                ProductDTO product = db.Products.Find(id);
+
+                //Проверяваме дали продукта се намира в кошницата
+
+                var productInCart = cart.FirstOrDefault(x => x.ProductId == id);
+
+                //Ако не,то добавяме този продукт
+
+                if (productInCart == null)
+                {
+                    cart.Add(new CartVM()
+                    {
+                        ProductId = product.Id,
+                        ProductName = product.Name,
+                        Quantity = 1,
+                        Price = product.Price,
+                        Image = product.ImageName
+                    });
+
+                }
+                //Ако съществува просто трябва да се добави единица продукт 
+                else
+                {
+                    productInCart.Quantity++;
+                }
+            }
+
+            //получаваме общото количество,цена и добавяме данните в модела
+
+            int qty = 0;
+            decimal price = 0m;
+
+            foreach (var item in cart)
+            {
+                qty += item.Quantity;
+                price += item.Quantity * item.Price;
+            }
+
+            model.Quantity = qty;
+            model.Price = price;
+            //Съхраняваме състоянието на кошницата в сесията
+
+            Session["cart"] = cart;
+
+            //Връщаме частично  View
+            
+            return PartialView("_AddToCartPartial",model);
+        }
+
+
+        //GET: /cart/IncrementProduct
+        public JsonResult IncrementProduct(int productId)
+        {
+            //Обявяваме лист cart
+
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            using (Db db = new Db())
+            {
+
+                //Получаваме модел CartVM от листа
+
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+
+                //Добавяме количество с 1
+
+                model.Quantity++;
+
+                //Съхраняваме необходимите данни
+
+                var result = new { qty = model.Quantity, price = model.Price };
+
+                //Връщаме JSON отговор с данните
+
+                return Json(result,JsonRequestBehavior.AllowGet);
+
+            }
         }
     }
 }

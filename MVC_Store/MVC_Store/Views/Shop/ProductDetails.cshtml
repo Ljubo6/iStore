@@ -5,7 +5,7 @@
 }
 
 <h2>@Model.Name</h2>
-   
+
 <br />
 
 <div class="row">
@@ -42,7 +42,7 @@
             {
                 <div class="col">
                     <a class="fancybox" rel="gallery1" href="/Images/Uploads/Products/@Model.Id/Gallery/@item">
-                        <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@item"/>
+                        <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@item" />
                     </a>
                 </div>
             }
@@ -55,4 +55,32 @@
     <link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
     <script src="~/Scripts/jquery.fancybox.js"></script>
     <script src="~/Content/ShopJS/ProductDetailsScript.js"></script>
+
+
+    <script>
+        /********************Add to cart*********************/
+        $(function () {
+            $("a.addtocart").click(function (e) {
+                e.preventDefault();
+
+                $("span.loader").addClass("ib");
+
+                var url = "/cart/AddToCartPartial";
+
+                $.get(url, { id: @Model.Id
+                }, function (data) {
+                    $(".ajaxcart").html(data);
+                }).done(function () {
+                    $("span.loader").removeClass("ib");
+                    $("div.ajaxmsg").addClass("ib");
+
+                    setTimeout(function () {
+                        $("div.ajaxmsg").fadeOut("fast");
+                        $("div.ajaxmsg").removeClass("ib");
+                    }, 2000);
+                });
+            });
+        });
+/****************************************************/
+    </script>
 }

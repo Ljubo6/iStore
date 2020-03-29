@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Cart Details";
+
 }
 
     <h2>Cart Details</h2>
@@ -33,7 +34,7 @@ else
                  </th>
 
                  <th>
-                     Тотал
+                     Total
                  </th>
 
                  <th>
@@ -47,11 +48,11 @@ else
              <td>
                  @Html.DisplayFor(modelItem => item.ProductName)
              </td>
-             <td>
+             <td class="qty@(item.ProductId)">
                  @Html.DisplayFor(modelItem => item.Quantity)
              </td>
              <td>
-                 @Html.DisplayFor(modelItem => item.Price)
+                 @Html.DisplayFor(modelItem => item.Price)€
              </td>
 
              <td>
@@ -64,8 +65,8 @@ else
                  <a href="#" class="removeproduct" data-id="@item.ProductId">Remove</a>
              </td>
 
-             <td>
-                 @Html.DisplayFor(modelItem => item.Total) €
+             <td class="total@(item.ProductId)">
+                 @Html.DisplayFor(modelItem => item.Total)€
              </td>      
          </tr>
         }
@@ -77,11 +78,16 @@ else
          <td></td>
          <td></td>
          <td></td>
-         <td>@ViewBag.GrandTotal €</td>
+         <td class="grandtotal"><b>GrangTotal: </b><span>@ViewBag.GrandTotal€</span></td>
 
      </tr>
 
     </table>
 
 
+}
+
+@section Scripts
+{
+    <script src="~/Content/ShopJS/IncrementProductScript.js"></script>
 }
