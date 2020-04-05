@@ -69,11 +69,29 @@ namespace SecuritySystemsStore.Services
             return await pageList;
         }
 
-        //public async Task<Page> GetById(int? id)
-        //{
-        //    var page = this.db.Pages.Find(id);
-        //    return await page;
-        //}
+        public DetailsPageVM GetDetailsView<T>(Page page)
+        {
+            var viewModel = new DetailsPageVM
+            {
+                Id = page.Id,
+                Title = page.Title,
+                Slug = page.Slug,
+                Body = page.Body,
+            };
+            return viewModel;
+        }
+
+        public EditPageInputVM GetEditView<T>(Page page)
+        {
+            var viewModel = new EditPageInputVM
+            {
+                Title = page.Title,
+                Slug = page.Slug,
+                Body = page.Body,
+                HasSidebar = page.HasSidebar,
+            };
+            return viewModel;
+        }
 
         public bool IsSlugAddUnique(AddPageVM input)
         {
@@ -124,10 +142,6 @@ namespace SecuritySystemsStore.Services
 
         }
 
-        public Task PageDetails(int id)
-        {
-            throw new NotImplementedException();
-        }
 
         public string ReturnSlug(EditPageInputVM input)
         {

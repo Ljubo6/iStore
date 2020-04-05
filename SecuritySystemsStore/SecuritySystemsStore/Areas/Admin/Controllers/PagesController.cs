@@ -70,28 +70,15 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Pages/EditPage/id
-        public async Task<IActionResult> EditPage(int? id)
+        public async Task<IActionResult> EditPage(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            //var page = await this.pagesService.GetById(id);
             var page = await this.db.Pages.FindAsync(id);
 
             if (page == null)
             {
                 return Content("The page does not exist.");
             }
-
-            var pageViewModel = new EditPageInputVM
-            {
-                Title = page.Title,
-                Slug = page.Slug,
-                Body = page.Body,
-                HasSidebar = page.HasSidebar,
-            };
-
+            var pageViewModel = this.pagesService.GetEditView<EditPageInputVM>(page);
             return View(pageViewModel);
         }
 
@@ -146,13 +133,7 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             {
                 return this.Content("The page does not exist.");
             }
-            var pageViewModel = new DetailsPageVM
-            {
-                Id = page.Id,
-                Title = page.Title,
-                Slug = page.Slug,
-                Body = page.Body,
-            };
+            var pageViewModel = this.pagesService.GetDetailsView<DetailsPageVM>(page);
 
             return View(pageViewModel);
         }

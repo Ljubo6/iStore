@@ -18,5 +18,7 @@ namespace SecuritySystemsStore.Services
         bool IsSlugEditUnique(EditPageInputVM input, string slug);
         bool IsTitleAddUnique(AddPageVM input);
         bool IsSlugAddUnique(AddPageVM input);
+        DetailsPageVM GetDetailsView<T>(Page page);
+        EditPageInputVM GetEditView<T>(Page page);
     }
 }
