@@ -1,0 +1,58 @@
+﻿@model SecuritySystemsStore.ViewModels.Pages.EditPageInputVM
+
+@{
+    ViewData["Title"] = "Edit Page";
+}
+
+<h1>Edit Page</h1>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditPage">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Slug" class="control-label"></label>
+                @if (Model.Slug == "home")
+                {
+                    <input asp-for="Slug" class="form-control" readonly="readonly" />
+                }
+                else
+                {
+                    <input asp-for="Slug" class="form-control" />
+                }
+                <span asp-validation-for="Slug" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Body" class="control-label"></label>
+                <textarea asp-for="Body" class="form-control"></textarea>
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="HasSidebar" /> @Html.DisplayNameFor(model => model.HasSidebar)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit Page" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to Pages</a>
+</div>
+
