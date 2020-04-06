@@ -20,5 +20,6 @@ namespace SecuritySystemsStore.Services
         bool IsSlugAddUnique(AddPageVM input);
         DetailsPageVM GetDetailsView<T>(Page page);
         EditPageInputVM GetEditView<T>(Page page);
+        void ReorderPages(int[] id);
     }
 }

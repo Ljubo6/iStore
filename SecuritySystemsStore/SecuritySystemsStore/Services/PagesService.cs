@@ -142,6 +142,21 @@ namespace SecuritySystemsStore.Services
 
         }
 
+        public void ReorderPages(int[] id)
+        {
+            int count = 1;
+
+            foreach (var pageId in id)
+            {
+                var page = this.db.Pages.Find(pageId);
+
+                page.Sorting = count;
+
+                this.db.SaveChanges();
+
+                count++;
+            }           
+        }
 
         public string ReturnSlug(EditPageInputVM input)
         {

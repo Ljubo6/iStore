@@ -109,7 +109,7 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             var newInput = new EditPageVM
             {
                 Id = input.Id,
-                Title = input.Title,
+                Title = input.Title.ToUpper(),
                 Slug = slug,
                 Body = input.Body,
                 HasSidebar = input.HasSidebar,
@@ -136,6 +136,27 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             var pageViewModel = this.pagesService.GetDetailsView<DetailsPageVM>(page);
 
             return View(pageViewModel);
+        }
+
+        // GET: Admin/Pages/DeletePage/id
+        public async Task<IActionResult> DeletePage(int id)
+        {
+            var page = await this.db.Pages.FindAsync(id);
+
+            this.db.Pages.Remove(page);
+
+            await this.db.SaveChangesAsync();
+
+            TempData["SM"] = "You have deleted a page";
+
+            return this.RedirectToAction("Index");
+        }
+
+        // GET: Admin/Pages/ReorderPages
+        [HttpPost]
+        public void ReorderPages(int[] id)
+        {           
+            this.pagesService.ReorderPages(id);
         }
     }
 }
