@@ -66,6 +66,11 @@ namespace SecuritySystemsStore
                     .SeedDataAsync()
                     .GetAwaiter()
                     .GetResult();
+
+                new SidebarSeeder(scopedService.ServiceProvider, dbContext)
+                    .SeedDataAsync()
+                    .GetAwaiter()
+                    .GetResult();
             }
 
             if (env.IsDevelopment())

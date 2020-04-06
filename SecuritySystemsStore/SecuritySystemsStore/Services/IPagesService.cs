@@ -21,5 +21,8 @@ namespace SecuritySystemsStore.Services
         DetailsPageVM GetDetailsView<T>(Page page);
         EditPageInputVM GetEditView<T>(Page page);
         void ReorderPages(int[] id);
+        Task EditSidebar(int id, string body);
+        SidebarVM ViewEditSidebar<T>();
+        Task<IEnumerable<SidebarVM>> GetSidebar();
     }
 }

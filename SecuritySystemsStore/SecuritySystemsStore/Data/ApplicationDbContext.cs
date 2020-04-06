@@ -15,5 +15,6 @@ namespace SecuritySystemsStore.Data
         }
 
         public DbSet<Page> Pages { get; set; }
+        public DbSet<Sidebar> Sidbar { get; set; }
     }
 }

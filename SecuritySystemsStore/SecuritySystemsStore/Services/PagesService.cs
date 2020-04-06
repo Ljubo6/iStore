@@ -55,6 +55,15 @@ namespace SecuritySystemsStore.Services
             await this.db.SaveChangesAsync();
         }
 
+        public async Task EditSidebar(int id, string body)
+        {
+            var sidebar = this.db.Sidbar.Find(id);
+
+            sidebar.Body = body;
+
+            await this.db.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<AllPageVM>> GetAll()
         {
            
@@ -91,6 +100,17 @@ namespace SecuritySystemsStore.Services
                 HasSidebar = page.HasSidebar,
             };
             return viewModel;
+        }
+
+        public async Task<IEnumerable<SidebarVM>> GetSidebar()
+        {
+            var sidebar = this.db.Sidbar.Select(x => new SidebarVM
+            {
+                Id = x.Id,
+                Body = x.Body,
+            }).ToListAsync();
+
+            return await sidebar;
         }
 
         public bool IsSlugAddUnique(AddPageVM input)
@@ -173,6 +193,18 @@ namespace SecuritySystemsStore.Services
                 }
             }
             return slug;
+        }
+
+        public SidebarVM ViewEditSidebar<T>()
+        {
+            var sidebar = this.db.Sidbar.FirstOrDefault();
+            var model = new SidebarVM
+            {
+                Id = sidebar.Id,
+                Body = sidebar.Body,
+            };
+
+            return model;
         }
     }
 }

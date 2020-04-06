@@ -158,5 +158,31 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
         {           
             this.pagesService.ReorderPages(id);
         }
+
+        //GET: Admin/Sidebar
+        public async Task<IActionResult> GetSidebars()
+        {
+            var sidebar = await this.pagesService.GetSidebar();
+
+            return this.View(sidebar);
+        }
+
+        // GET: Admin/Pages/EditSidebar
+        public IActionResult EditSidebar()
+        {
+            var viewModel = this.pagesService.ViewEditSidebar<SidebarVM>();
+            return View(viewModel);
+        }
+
+        // POST: Admin/Pages/EditSidebar
+        [HttpPost]
+        public async Task<IActionResult> EditSidebar(SidebarVM input)
+        {           
+            await this.pagesService.EditSidebar(input.Id,input.Body);
+
+            TempData["SM"] = "You have edited the sidebar!";
+
+            return RedirectToAction("EditSidebar");
+        }
     }
 }
