@@ -46,6 +46,10 @@ namespace SecuritySystemsStore
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            services.AddSession();
+            services.AddDistributedMemoryCache();
+
+
 
             services.AddTransient<IPagesService, PagesService>();
         }
@@ -87,6 +91,7 @@ namespace SecuritySystemsStore
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthentication();

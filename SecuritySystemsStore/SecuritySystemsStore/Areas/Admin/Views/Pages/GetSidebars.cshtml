@@ -1,0 +1,33 @@
+﻿@model IEnumerable<SecuritySystemsStore.ViewModels.Pages.SidebarVM>
+
+@{
+    ViewData["Title"] = "Get Sidebars";
+}
+
+<h1>Sidebars</h1>
+
+@*<p>
+    <a asp-action="Create">Get Sidebar</a>
+</p>*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Body)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Body)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditSidebar", new { id=item.Id})
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

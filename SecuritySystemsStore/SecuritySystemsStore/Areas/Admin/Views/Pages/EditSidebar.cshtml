@@ -1,0 +1,39 @@
+﻿@model SecuritySystemsStore.ViewModels.Pages.SidebarVM
+
+@{
+    ViewData["Title"] = "Edit Sidebar";
+}
+
+<h1>Edit Sidebar</h1>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="EditSidebar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @*<label asp-for="Body" class="control-label"></label>*@
+                <textarea asp-for="Body" class="form-control"></textarea>
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to Pages</a>
+</div>
+
+@section Scripts
+{
+    <script src="~/Scripts/initCKeditor.js"></script>
+}

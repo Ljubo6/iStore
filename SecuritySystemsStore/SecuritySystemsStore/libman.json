@@ -5,6 +5,14 @@
     {
       "library": "jqueryui@1.12.1",
       "destination": "wwwroot/lib/jqueryui/"
+    },
+    {
+      "library": "ckeditor@4.0.1",
+      "destination": "wwwroot/lib/ckeditor/"
+    },
+    {
+      "library": "tinymce@4.6.2",
+      "destination": "wwwroot/lib/tinymce/"
     }
   ]
 }

@@ -7,6 +7,8 @@ using SecuritySystemsStore.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SecuritySystemsStore.Services
@@ -59,7 +61,8 @@ namespace SecuritySystemsStore.Services
         {
             var sidebar = this.db.Sidbar.Find(id);
 
-            sidebar.Body = body;
+            var content = WebUtility.HtmlDecode(Regex.Replace(body, @"<[^>]+>", string.Empty));
+            sidebar.Body = content;
 
             await this.db.SaveChangesAsync();
         }
