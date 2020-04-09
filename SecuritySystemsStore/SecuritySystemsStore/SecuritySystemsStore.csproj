@@ -27,6 +27,7 @@
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="wwwroot\CMS\Content\" />
     <Folder Include="wwwroot\CMS\Temp\" />
+    <Folder Include="wwwroot\Content\img\" />
   </ItemGroup>
 
 </Project>

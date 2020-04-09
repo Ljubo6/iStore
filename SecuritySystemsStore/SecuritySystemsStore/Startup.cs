@@ -52,6 +52,7 @@ namespace SecuritySystemsStore
 
 
             services.AddTransient<IPagesService, PagesService>();
+            services.AddTransient<ICategoriesService, CategoriesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +76,10 @@ namespace SecuritySystemsStore
                     .SeedDataAsync()
                     .GetAwaiter()
                     .GetResult();
+                new CategorySeeder(scopedService.ServiceProvider, dbContext)
+                   .SeedDataAsync()
+                   .GetAwaiter()
+                   .GetResult();
             }
 
             if (env.IsDevelopment())
