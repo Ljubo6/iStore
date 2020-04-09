@@ -22,12 +22,12 @@ namespace SecuritySystemsStore.SeedData
         }
         private async Task SeedSidebarAsync()
         {
-            var sidebar = await this.dbContext.Sidbar.FindAsync(1);
+            var sidebar = await this.dbContext.Sidebar.FindAsync(1);
             if (sidebar != null)
             {
                 return;
             }
-            await dbContext.Sidbar.AddAsync(new Sidebar
+            await dbContext.Sidebar.AddAsync(new Sidebar
             {
                 Body = "Body",
             });

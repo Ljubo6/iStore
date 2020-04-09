@@ -28,5 +28,37 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
 
             return this.View(categoryList);
         }
+
+        // POST: Admin/Shop/AddNewCategory
+        [HttpPost]
+        public string AddNewCategory(string catName)
+        {
+            var id = this.categoriesService.GetId(catName);
+            return id;
+        }
+
+        // POST: Admin/Shop/ReorderCategories
+        [HttpPost]
+        public void ReorderCategories(int[] id)
+        {
+            this.categoriesService.ReorderCategories(id);
+        }
+
+        // GET: Admin/Shop/DeleteCategory/id
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var category = await this.db.Categories.FindAsync(id);
+
+            this.db.Categories.Remove(category);
+
+            await this.db.SaveChangesAsync();
+
+            TempData["SM"] = "You have deleted a category";
+
+            return this.RedirectToAction("Categories");
+        }
+
+
+
     }
 }

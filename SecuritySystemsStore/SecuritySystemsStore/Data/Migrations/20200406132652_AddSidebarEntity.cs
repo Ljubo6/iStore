@@ -7,7 +7,7 @@ namespace SecuritySystemsStore.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Sidbar",
+                name: "Sidebar",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -16,14 +16,14 @@ namespace SecuritySystemsStore.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sidbar", x => x.Id);
+                    table.PrimaryKey("PK_Sidebar", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Sidbar");
+                name: "Sidebar");
         }
     }
 }

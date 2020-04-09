@@ -59,7 +59,7 @@ namespace SecuritySystemsStore.Services
 
         public async Task EditSidebar(int id, string body)
         {
-            var sidebar = this.db.Sidbar.Find(id);
+            var sidebar = this.db.Sidebar.Find(id);
 
             var content = WebUtility.HtmlDecode(Regex.Replace(body, @"<[^>]+>", string.Empty));
             sidebar.Body = content;
@@ -107,7 +107,7 @@ namespace SecuritySystemsStore.Services
 
         public async Task<IEnumerable<SidebarVM>> GetSidebar()
         {
-            var sidebar = this.db.Sidbar.Select(x => new SidebarVM
+            var sidebar = this.db.Sidebar.Select(x => new SidebarVM
             {
                 Id = x.Id,
                 Body = x.Body,
@@ -200,7 +200,7 @@ namespace SecuritySystemsStore.Services
 
         public SidebarVM ViewEditSidebar<T>()
         {
-            var sidebar = this.db.Sidbar.FirstOrDefault();
+            var sidebar = this.db.Sidebar.FirstOrDefault();
             var model = new SidebarVM
             {
                 Id = sidebar.Id,

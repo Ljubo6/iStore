@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SecuritySystemsStore.Data;
+using SecuritySystemsStore.Models;
 using SecuritySystemsStore.ViewModels.Shop;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,43 @@ namespace SecuritySystemsStore.Services
             }).ToListAsync();
 
             return await categoryList;
+        }
+
+        public string GetId(string catName)
+        {
+            if (db.Categories.Any(x => x.Name == catName))
+            {
+                return "titletaken";
+            }
+            var lastCategory = (db.Categories.Max(x => x.Sorting));
+
+            var category = new Category
+            {
+                Name = catName,
+                Slug = catName.Replace(" ", "-").ToLower(),
+                Sorting = lastCategory + 1,
+            };
+
+            this.db.AddAsync(category);
+            this.db.SaveChanges();
+
+            return category.Id.ToString();           
+         }
+
+        public void ReorderCategories(int[] id)
+        {
+            int count = 1;
+
+            foreach (var categoryId in id)
+            {
+                var category = this.db.Categories.Find(categoryId);
+
+                category.Sorting = count;
+
+                this.db.SaveChanges();
+
+                count++;
+            }
         }
     }
 }
