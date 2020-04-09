@@ -11,5 +11,6 @@ namespace SecuritySystemsStore.Services
         Task <IEnumerable<CategoryVM>> GetAllCategories();
         string GetId(string catName);
         void ReorderCategories(int[] id);
+        string RenameCategories(string newCatName, int id);
     }
 }

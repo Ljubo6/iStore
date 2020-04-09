@@ -51,6 +51,24 @@ namespace SecuritySystemsStore.Services
             return category.Id.ToString();           
          }
 
+        public string RenameCategories(string newCatName, int id)
+        {
+            if (db.Categories.Any(x => x.Name == newCatName))
+            { 
+                return "titletaken";
+            }
+
+            var category = this.db.Categories.Find(id);
+
+            category.Name = newCatName;
+
+            category.Slug = newCatName.Replace(" ", "-").ToLower();
+
+            db.SaveChanges();
+
+            return "OK";
+        }
+
         public void ReorderCategories(int[] id)
         {
             int count = 1;

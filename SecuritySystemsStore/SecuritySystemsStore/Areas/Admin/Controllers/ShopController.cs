@@ -19,8 +19,10 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
         public ShopController(ApplicationDbContext db, ICategoriesService categoriesService)
         {
             this.db = db;
+
             this.categoriesService = categoriesService;
         }
+
         // GET: Admin/Shop
         public async Task<IActionResult> Categories()
         {
@@ -34,6 +36,7 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
         public string AddNewCategory(string catName)
         {
             var id = this.categoriesService.GetId(catName);
+
             return id;
         }
 
@@ -58,7 +61,11 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             return this.RedirectToAction("Categories");
         }
 
-
-
+        // POST: Admin/Shop/RenameCategory/id
+        [HttpPost]
+        public string RenameCategory(string newCatName, int id)
+        {
+            return this.categoriesService.RenameCategories(newCatName,id);
+        }
     }
 }
