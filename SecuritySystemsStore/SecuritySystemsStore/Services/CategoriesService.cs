@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SecuritySystemsStore.Data;
 using SecuritySystemsStore.Models;
 using SecuritySystemsStore.ViewModels.Shop;
@@ -28,6 +29,19 @@ namespace SecuritySystemsStore.Services
             }).ToListAsync();
 
             return await categoryList;
+        }
+
+        public ProductVM GetGategoriesList<T>()
+        {
+            var model = new ProductVM();
+
+            model.Categories = db.Categories.Select(c => new SelectListItem 
+            { 
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            return model;
         }
 
         public string GetId(string catName)

@@ -5,6 +5,13 @@
     <UserSecretsId>aspnet-SecuritySystemsStore-6FD6BB23-5245-45A4-9330-069D36E51C08</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200409222045_AddSidebarCategoryProductEntities.cs" />
+    <Compile Remove="Data\Migrations\20200409222045_AddSidebarCategoryProductEntities.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200410080548_AddSidebarCategoryProductEntities.cs" />
+    <Compile Remove="Data\Migrations\20200410080548_AddSidebarCategoryProductEntities.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="jQuery.UI" Version="1.12.1.1" />

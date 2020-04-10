@@ -1,5 +1,4 @@
-﻿// Урок 11 Скрипт предпросмотра картинок
-$(function () {
+﻿$(function () {
 
     /* Preview selected image */
 

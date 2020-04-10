@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecuritySystemsStore.Data;
 using SecuritySystemsStore.Services;
+using SecuritySystemsStore.ViewModels.Shop;
 
 namespace SecuritySystemsStore.Areas.Admin.Controllers
 {
@@ -61,11 +62,20 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             return this.RedirectToAction("Categories");
         }
 
-        // POST: Admin/Shop/RenameCategory/id
+        // POST: Admin/Shop/RenameCategory/newCatName,id
         [HttpPost]
         public string RenameCategory(string newCatName, int id)
         {
             return this.categoriesService.RenameCategories(newCatName,id);
+        }
+
+        // GET: Admin/Shop/AddProduct
+        [HttpGet]
+        public IActionResult AddProduct()
+        {          
+            var viewModel = this.categoriesService.GetGategoriesList<ProductVM>();
+
+            return this.View(viewModel);
         }
     }
 }
