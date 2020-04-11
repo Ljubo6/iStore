@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,13 @@ namespace SecuritySystemsStore.Services
     {
         private readonly ApplicationDbContext db;
         private readonly IWebHostEnvironment environment;
+        private readonly IMapper mapper;
 
-        public CategoriesService(ApplicationDbContext db,IWebHostEnvironment environment)
+        public CategoriesService(ApplicationDbContext db,IWebHostEnvironment environment,IMapper mapper)
         {
             this.db = db;
             this.environment = environment;
+            this.mapper = mapper;
         }
 
         public async Task<int> AddProductAsync(ProductVM input)
@@ -102,7 +105,37 @@ namespace SecuritySystemsStore.Services
             return category.Id.ToString();           
          }
 
-            public string RenameCategories(string newCatName, int id)
+        public IEnumerable<ProductVM> GetListOfProductsViews(int? catId)
+        {
+            var listOfProductsVM = new List<ProductVM>();
+            var listOfProducts = db.Products.ToArray()
+            .Where(x => catId == null || catId == 0 || x.CategoryId == catId).ToList();
+
+            foreach (var product in listOfProducts)
+            {
+                var listView =  mapper.Map<ProductVM>(product);
+
+                listOfProductsVM.Add(listView);
+            }
+
+            //var listOfProductVM = db.Products.ToArray()
+            //    .Where(x => catId == null || catId == 0 || x.CategoryId == catId)
+            //    .Select(x => new ProductVM 
+            //    { 
+            //        Name = x.Name,
+            //        Slug = x.Slug,
+            //        Description = x.Description,
+            //        Price = x.Price,
+            //        CategoryName = x.CategoryName,
+            //        CategoryId = x.CategoryId,
+            //        ImageName = x.ImageName
+            //    })
+            //    .ToList();
+
+            return listOfProductsVM;
+        }
+
+        public string RenameCategories(string newCatName, int id)
         {
             if (db.Categories.Any(x => x.Name == newCatName))
             { 

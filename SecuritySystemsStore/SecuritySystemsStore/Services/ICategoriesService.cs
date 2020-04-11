@@ -17,5 +17,6 @@ namespace SecuritySystemsStore.Services
         ProductVM GetCategoriesList<T>();
         ProductVM CheckCategoriesList<T>(ProductVM model);
         Task<int> AddProductAsync(ProductVM input);
+        IEnumerable<ProductVM> GetListOfProductsViews(int? catId);
     }
 }

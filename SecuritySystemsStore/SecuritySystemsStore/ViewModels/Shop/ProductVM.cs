@@ -11,6 +11,10 @@ namespace SecuritySystemsStore.ViewModels.Shop
 {
     public class ProductVM
     {
+        public ProductVM()
+        {
+
+        }
         public int Id { get; set; }
 
         [Required]

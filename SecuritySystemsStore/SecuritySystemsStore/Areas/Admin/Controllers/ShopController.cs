@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
 using SecuritySystemsStore.Data;
 using SecuritySystemsStore.Services;
 using SecuritySystemsStore.ViewModels.Shop;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using X.PagedList;
 
 namespace SecuritySystemsStore.Areas.Admin.Controllers
 {
@@ -107,7 +109,9 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             TempData["SM"] = "You have added a product!";
 
             #region Upload Image
+
             var originalDirectory = hostEnvironment.WebRootPath + "\\Images\\Uploads\\";
+
             var pathString1 = Path.Combine(originalDirectory.ToString(), "Products");
             var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
             var pathString3 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
@@ -161,6 +165,8 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
 
                 var product = await this.db.Products.FindAsync(id);
 
+                product.ImageName = imageName;
+
                 var path = string.Format($"{pathString2}\\{imageName}");
                 var path2 = string.Format($"{pathString3}\\{imageName}");
 
@@ -168,6 +174,7 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
                 {
                     await file.CopyToAsync(stream);
                 }
+
                 await this.db.SaveChangesAsync();
 
                 using var image = Image.Load(file.OpenReadStream());
@@ -178,6 +185,24 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             #endregion
 
             return RedirectToAction("AddProduct");
+        }
+
+        // GET: Admin/Shop/Products
+        public IActionResult Products(int? page,int?catId)
+        {
+            var listOfProductVM = this.categoriesService.GetListOfProductsViews(catId);
+
+            var pageNumber = page ?? 1;
+
+            ViewBag.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+
+            ViewBag.SelectedCat = catId.ToString();
+
+            var onePageOfProducts = listOfProductVM.ToPagedList(pageNumber, 3);
+
+            ViewBag.onePageOfProducts = onePageOfProducts ;
+
+            return View(listOfProductVM);
         }
     }
 }
