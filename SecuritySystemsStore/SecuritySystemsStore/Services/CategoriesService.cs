@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SecuritySystemsStore.Data;
 using SecuritySystemsStore.Models;
 using SecuritySystemsStore.ViewModels.Shop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,11 +16,45 @@ namespace SecuritySystemsStore.Services
     public class CategoriesService : ICategoriesService
     {
         private readonly ApplicationDbContext db;
+        private readonly IWebHostEnvironment environment;
 
-        public CategoriesService(ApplicationDbContext db)
+        public CategoriesService(ApplicationDbContext db,IWebHostEnvironment environment)
         {
             this.db = db;
+            this.environment = environment;
         }
+
+        public async Task<int> AddProductAsync(ProductVM input)
+        {
+            
+            var category = db.Categories.FirstOrDefault(x => x.Id == input.CategoryId);
+            Product product = new Product();
+
+            product.Name = input.Name;
+            product.Slug = input.Name.Replace(" ", "-").ToLower();
+            product.Description = input.Description;
+            product.Price = input.Price;
+            product.CategoryId = input.CategoryId;
+            product.CategoryName = category.Name;
+
+            await this.db.Products.AddAsync(product);
+            await this.db.SaveChangesAsync();
+
+            return product.Id;
+        }
+
+        public ProductVM CheckCategoriesList<T>(ProductVM model)
+        {
+            model.Categories = db.Categories.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            return model;
+        }
+
+
         public async Task<IEnumerable<CategoryVM>> GetAllCategories()
         {
             var categoryList = db.Categories.OrderBy(x => x.Sorting).Select(x => new CategoryVM
@@ -31,7 +68,7 @@ namespace SecuritySystemsStore.Services
             return await categoryList;
         }
 
-        public ProductVM GetGategoriesList<T>()
+        public ProductVM GetCategoriesList<T>()
         {
             var model = new ProductVM();
 
@@ -65,7 +102,7 @@ namespace SecuritySystemsStore.Services
             return category.Id.ToString();           
          }
 
-        public string RenameCategories(string newCatName, int id)
+            public string RenameCategories(string newCatName, int id)
         {
             if (db.Categories.Any(x => x.Name == newCatName))
             { 

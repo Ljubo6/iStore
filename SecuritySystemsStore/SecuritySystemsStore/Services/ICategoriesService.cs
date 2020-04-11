@@ -1,4 +1,6 @@
-﻿using SecuritySystemsStore.ViewModels.Shop;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SecuritySystemsStore.ViewModels.Shop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,8 @@ namespace SecuritySystemsStore.Services
         string GetId(string catName);
         void ReorderCategories(int[] id);
         string RenameCategories(string newCatName, int id);
-        ProductVM GetGategoriesList<T>();
+        ProductVM GetCategoriesList<T>();
+        ProductVM CheckCategoriesList<T>(ProductVM model);
+        Task<int> AddProductAsync(ProductVM input);
     }
 }
