@@ -57,6 +57,16 @@ namespace SecuritySystemsStore.Services
             return model;
         }
 
+        public ProductVM FillModel<T>(int id, ProductVM model)
+        {
+            model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+
+            model.GalleryImages = Directory
+                .EnumerateFiles(System.IO.Path.GetPathRoot("/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                .Select(fn => Path.GetFileName(fn));
+
+            return model;
+        }
 
         public async Task<IEnumerable<CategoryVM>> GetAllCategories()
         {
@@ -69,6 +79,18 @@ namespace SecuritySystemsStore.Services
             }).ToListAsync();
 
             return await categoryList;
+        }
+
+        public ProductVM GetAllProducts<T>(int id, Product product)
+        {
+            var model = mapper.Map<ProductVM>(product);
+            model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+
+            model.GalleryImages = Directory
+                .EnumerateFiles(System.IO.Path.GetPathRoot("/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                .Select(fn => Path.GetFileName(fn));
+
+            return model;
         }
 
         public ProductVM GetCategoriesList<T>()
@@ -105,11 +127,17 @@ namespace SecuritySystemsStore.Services
             return category.Id.ToString();           
          }
 
-        public IEnumerable<ProductVM> GetListOfProductsViews(int? catId)
+        public IEnumerable<Product> GetListOfProducts(int? catId)
+        {
+            var listOfProducts = this.db.Products.ToArray()
+           .Where(x => catId == null || catId == 0 || x.CategoryId == catId).ToList();
+            return listOfProducts;
+        }
+
+        public IEnumerable<ProductVM> GetListOfProductsViews(List<Product> listOfProducts)
         {
             var listOfProductsVM = new List<ProductVM>();
-            var listOfProducts = db.Products.ToArray()
-            .Where(x => catId == null || catId == 0 || x.CategoryId == catId).ToList();
+
 
             foreach (var product in listOfProducts)
             {
@@ -117,20 +145,6 @@ namespace SecuritySystemsStore.Services
 
                 listOfProductsVM.Add(listView);
             }
-
-            //var listOfProductVM = db.Products.ToArray()
-            //    .Where(x => catId == null || catId == 0 || x.CategoryId == catId)
-            //    .Select(x => new ProductVM 
-            //    { 
-            //        Name = x.Name,
-            //        Slug = x.Slug,
-            //        Description = x.Description,
-            //        Price = x.Price,
-            //        CategoryName = x.CategoryName,
-            //        CategoryId = x.CategoryId,
-            //        ImageName = x.ImageName
-            //    })
-            //    .ToList();
 
             return listOfProductsVM;
         }
@@ -167,6 +181,19 @@ namespace SecuritySystemsStore.Services
 
                 count++;
             }
+        }
+
+        public async Task UploadProduct(ProductVM model, Product product)
+        {
+            model.Slug = model.Name.Replace(" ", "-").ToLower();
+            model.Category = this.db.Categories.FirstOrDefault(x => x.Id == model.CategoryId);
+            model.CategoryName = model.Category.Name;
+            product = mapper.Map<Product>(model);
+
+            this.db.Products.Update(product);
+
+            await this.db.SaveChangesAsync();
+
         }
     }
 }

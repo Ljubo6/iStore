@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting.Internal;
 using SecuritySystemsStore.Data;
+using SecuritySystemsStore.Models;
 using SecuritySystemsStore.Services;
 using SecuritySystemsStore.ViewModels.Shop;
 using SixLabors.ImageSharp;
@@ -26,7 +27,7 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
         private readonly ICategoriesService categoriesService;
         private readonly IWebHostEnvironment hostEnvironment;
 
-        public ShopController(ApplicationDbContext db, ICategoriesService categoriesService,IWebHostEnvironment hostEnvironment)
+        public ShopController(ApplicationDbContext db, ICategoriesService categoriesService, IWebHostEnvironment hostEnvironment)
         {
             this.db = db;
             this.categoriesService = categoriesService;
@@ -188,9 +189,11 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Shop/Products
-        public IActionResult Products(int? page,int?catId)
+        public async Task<IActionResult> Products(int? page, int? catId)
         {
-            var listOfProductVM = this.categoriesService.GetListOfProductsViews(catId);
+            var listOfProducts = await this.categoriesService.GetListOfProducts(catId).ToListAsync();
+
+            var listOfProductVM = this.categoriesService.GetListOfProductsViews(listOfProducts);
 
             var pageNumber = page ?? 1;
 
@@ -200,9 +203,123 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
 
             var onePageOfProducts = listOfProductVM.ToPagedList(pageNumber, 3);
 
-            ViewBag.onePageOfProducts = onePageOfProducts ;
+            ViewBag.onePageOfProducts = onePageOfProducts;
 
             return View(listOfProductVM);
+        }
+
+        // GET: Admin/Shop/EditProduct/id
+        [HttpGet]
+        public async Task<IActionResult> EditProduct(int id)
+        {
+            var product = await this.db.Products.FindAsync(id);
+            if (product == null)
+            {
+                return Content("That product does not exist.");
+            }
+
+            var viewModel = this.categoriesService.GetAllProducts<ProductVM>(id, product);
+
+            return View(viewModel);
+        }
+
+       // GET: Admin/Shop/EditProduct/id
+       //[HttpPost]
+        public async Task<IActionResult> EditProduct(ProductVM model, IFormFile file,Product product)
+        {
+            int id = model.Id;
+
+            model = this.categoriesService.FillModel<ProductVM>(id, model);
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            if (this.db.Products.Where(x => x.Id != id).Any(x => x.Name == model.Name))
+            {
+                ModelState.AddModelError("", "That product name is taken!");
+                return View(model);
+            }
+            
+            await this.categoriesService.UploadProduct(model,product);
+
+
+            TempData["SM"] = "You have edited the product!";
+
+
+            //// Логика обработки изображений (Урок 15)
+            //#region Image Upload
+
+            //// Проверяем загрузку файла
+            //if (file != null && file.ContentLength > 0)
+            //{
+            //    // Получаем расширение файла
+            //    string ext = file.ContentType.ToLower();
+
+            //    // Проверяем расширение
+            //    if (ext != "image/jpg" &&
+            //        ext != "image/jpeg" &&
+            //        ext != "image/pjpeg" &&
+            //        ext != "image/gif" &&
+            //        ext != "image/x-png" &&
+            //        ext != "image/png")
+            //    {
+            //        using (Db db = new Db())
+            //        {
+            //            ModelState.AddModelError("", "The image was not uploaded - wrong image extension");
+            //            return View(model);
+            //        }
+            //    }
+
+            //    // Устанавливаем пути загрузки
+            //    var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
+
+            //    var pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
+            //    var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
+
+            //    // Удаляем существующие файлы и директории
+            //    DirectoryInfo di1 = new DirectoryInfo(pathString1);
+            //    DirectoryInfo di2 = new DirectoryInfo(pathString2);
+
+            //    foreach (var file2 in di1.GetFiles())
+            //    {
+            //        file2.Delete();
+            //    }
+
+            //    foreach (var file3 in di2.GetFiles())
+            //    {
+            //        file3.Delete();
+            //    }
+
+            //    // Сохраняем имя изображение
+            //    string imageName = file.FileName;
+
+            //    using (Db db = new Db())
+            //    {
+            //        ProductDTO dto = db.Products.Find(id);
+            //        dto.ImageName = imageName;
+
+            //        db.SaveChanges();
+            //    }
+
+            //    // Сохраняем оригинал и превью версии
+            //    var path = string.Format($"{pathString1}\\{imageName}");
+            //    var path2 = string.Format($"{pathString2}\\{imageName}");
+
+            //    // Сохраняем оригинальное изображение
+            //    file.SaveAs(path);
+
+            //    // Создаём и сохраняем уменьшенную копию
+            //    WebImage img = new WebImage(file.InputStream);
+            //    img.Resize(200, 200).Crop(1, 1);
+            //    img.Save(path2);
+            //}
+
+            //#endregion
+
+            //// Переадресовываем пользователя
+            return RedirectToAction("EditProduct");
         }
     }
 }

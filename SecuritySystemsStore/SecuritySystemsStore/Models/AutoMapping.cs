@@ -12,6 +12,7 @@ namespace SecuritySystemsStore.Models
         public AutoMapping()
         {
             CreateMap<Product,ProductVM>();
+            CreateMap<ProductVM,Product>();
         }
     }
 }

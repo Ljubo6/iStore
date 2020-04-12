@@ -32,6 +32,7 @@ namespace SecuritySystemsStore.ViewModels.Shop
         [Required]
         [DisplayName("Category")]
         public int CategoryId { get; set; }
+        public Category Category { get; set; }
 
         [DisplayName("Image")]
         public string ImageName { get; set; }
