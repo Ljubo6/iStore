@@ -57,6 +57,15 @@ namespace SecuritySystemsStore.Services
             return model;
         }
 
+        public async Task Delete(int id)
+        {
+            var product = await this.db.Products.FindAsync(id);
+
+            this.db.Products.Remove(product);
+
+            await this.db.SaveChangesAsync();
+        }
+
         public ProductVM FillModel<T>(int id, ProductVM model)
         {
             model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
@@ -87,7 +96,7 @@ namespace SecuritySystemsStore.Services
             model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
 
             model.GalleryImages = Directory
-                .EnumerateFiles(System.IO.Path.GetPathRoot("/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                .EnumerateFiles((environment.WebRootPath + "/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
                 .Select(fn => Path.GetFileName(fn));
 
             return model;

@@ -20,6 +20,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>
@@ -39,7 +40,7 @@
     <Folder Include="wwwroot\CMS\Content\" />
     <Folder Include="wwwroot\CMS\Temp\" />
     <Folder Include="wwwroot\Content\img\" />
-    <Folder Include="wwwroot\Images\" />
+    <Folder Include="wwwroot\Images\Uploads\Products\" />
   </ItemGroup>
 
 </Project>

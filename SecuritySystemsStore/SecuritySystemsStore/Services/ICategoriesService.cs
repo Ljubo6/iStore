@@ -23,5 +23,6 @@ namespace SecuritySystemsStore.Services
         IEnumerable<Product> GetListOfProducts(int? catId);
         ProductVM FillModel<T>(int id, ProductVM model);
         Task UploadProduct(ProductVM model,Product product);
+        Task Delete(int id);
     }
 }

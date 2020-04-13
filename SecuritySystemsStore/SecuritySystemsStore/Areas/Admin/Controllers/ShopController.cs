@@ -223,9 +223,9 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-       // GET: Admin/Shop/EditProduct/id
-       //[HttpPost]
-        public async Task<IActionResult> EditProduct(ProductVM model, IFormFile file,Product product)
+        // GET: Admin/Shop/EditProduct/id
+        //[HttpPost]
+        public async Task<IActionResult> EditProduct(ProductVM model, IFormFile file, Product product)
         {
             int id = model.Id;
 
@@ -241,85 +241,147 @@ namespace SecuritySystemsStore.Areas.Admin.Controllers
                 ModelState.AddModelError("", "That product name is taken!");
                 return View(model);
             }
-            
-            await this.categoriesService.UploadProduct(model,product);
 
+            await this.categoriesService.UploadProduct(model, product);
 
             TempData["SM"] = "You have edited the product!";
 
+            #region Image Upload
 
-            //// Логика обработки изображений (Урок 15)
-            //#region Image Upload
+            if (file != null && file.Length > 0)
+            {
+                string imageName = file.FileName;
+                string[] pathArr = imageName.Split('\\');
+                string[] extension = pathArr.Last().Split(".");
 
-            //// Проверяем загрузку файла
-            //if (file != null && file.ContentLength > 0)
-            //{
-            //    // Получаем расширение файла
-            //    string ext = file.ContentType.ToLower();
+                imageName = pathArr.Last();
 
-            //    // Проверяем расширение
-            //    if (ext != "image/jpg" &&
-            //        ext != "image/jpeg" &&
-            //        ext != "image/pjpeg" &&
-            //        ext != "image/gif" &&
-            //        ext != "image/x-png" &&
-            //        ext != "image/png")
-            //    {
-            //        using (Db db = new Db())
-            //        {
-            //            ModelState.AddModelError("", "The image was not uploaded - wrong image extension");
-            //            return View(model);
-            //        }
-            //    }
+                //string ext = extension.Last().ToLower();
+                string ext = file.ContentType.ToLower();
 
-            //    // Устанавливаем пути загрузки
-            //    var originalDirectory = new DirectoryInfo(string.Format($"{Server.MapPath(@"\")}Images\\Uploads"));
+                if (ext != "image/jpg" &&
+                    ext != "image/jpeg" &&
+                    ext != "image/pjpeg" &&
+                    ext != "image/gif" &&
+                    ext != "image/x-png" &&
+                    ext != "image/png")
+                {
+                    var viewModel = this.categoriesService.CheckCategoriesList<ProductVM>(model);
+                    ModelState.AddModelError("", "The image was not uploaded - wrong image extension");
+                    return this.View(viewModel);
+                }
 
-            //    var pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
-            //    var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
+                var originalDirectory = hostEnvironment.WebRootPath + "\\Images\\Uploads\\";
 
-            //    // Удаляем существующие файлы и директории
-            //    DirectoryInfo di1 = new DirectoryInfo(pathString1);
-            //    DirectoryInfo di2 = new DirectoryInfo(pathString2);
+                var pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
+                var pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Thumbs");
 
-            //    foreach (var file2 in di1.GetFiles())
-            //    {
-            //        file2.Delete();
-            //    }
+                DirectoryInfo di1 = new DirectoryInfo(pathString1);
+                DirectoryInfo di2 = new DirectoryInfo(pathString2);
 
-            //    foreach (var file3 in di2.GetFiles())
-            //    {
-            //        file3.Delete();
-            //    }
+                foreach (var file2 in di1.GetFiles())
+                {
+                    file2.Delete();
+                }
 
-            //    // Сохраняем имя изображение
-            //    string imageName = file.FileName;
+                foreach (var file3 in di2.GetFiles())
+                {
+                    file3.Delete();
+                }
 
-            //    using (Db db = new Db())
-            //    {
-            //        ProductDTO dto = db.Products.Find(id);
-            //        dto.ImageName = imageName;
+                product = await this.db.Products.FindAsync(id);
 
-            //        db.SaveChanges();
-            //    }
+                product.ImageName = imageName;
 
-            //    // Сохраняем оригинал и превью версии
-            //    var path = string.Format($"{pathString1}\\{imageName}");
-            //    var path2 = string.Format($"{pathString2}\\{imageName}");
 
-            //    // Сохраняем оригинальное изображение
-            //    file.SaveAs(path);
+                var path = string.Format($"{pathString1}\\{imageName}");
+                var path2 = string.Format($"{pathString2}\\{imageName}");
 
-            //    // Создаём и сохраняем уменьшенную копию
-            //    WebImage img = new WebImage(file.InputStream);
-            //    img.Resize(200, 200).Crop(1, 1);
-            //    img.Save(path2);
-            //}
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
 
-            //#endregion
+                await this.db.SaveChangesAsync();
 
-            //// Переадресовываем пользователя
+                using var image = Image.Load(file.OpenReadStream());
+                image.Mutate(x => x.Resize(200, 200));
+                image.Save(path2);
+            }
+            #endregion
+
             return RedirectToAction("EditProduct");
+        }
+
+        // POST: Admin/Shop/DeleteProduct/id
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            await this.categoriesService.Delete(id);
+
+            var originalDirectory = hostEnvironment.WebRootPath + "\\Images\\Uploads\\";
+
+            var pathString = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
+
+            if (Directory.Exists(pathString))
+            {
+                Directory.Delete(pathString, true);
+            }                
+
+            return RedirectToAction("Products");
+
+        }
+
+        // POST: Admin/Shop/SaveGalleryImages/id
+        [HttpPost]
+        public void SaveGalleryImages(int id)
+        {
+            foreach (var filename in Request.Form.Files)
+            {
+                var fileName = filename.Name;
+                IFormFile file = filename;
+
+                if (file != null && file.Length > 0)
+                {
+                    var originalDirectory = hostEnvironment.WebRootPath + "\\Images\\Uploads\\";
+
+                    string pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery");
+                    string pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs");
+
+                    var path = string.Format($"{pathString1}\\{file.FileName}");
+                    var path2 = string.Format($"{pathString2}\\{file.FileName}");
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyToAsync(stream);
+                    }
+
+                    this.db.SaveChangesAsync();
+
+                    using var image = Image.Load(file.OpenReadStream());
+                    image.Mutate(x => x.Resize(200, 200));
+                    image.Save(path2);
+                }
+
+            }
+        }
+
+
+        // POST: Admin/Shop/DeleteImage/id/imageName
+        public void DeleteImage(int id, string imageName)
+        {
+            string fullPath1 = (hostEnvironment.WebRootPath + "/Images/Uploads/Products/" + id.ToString() + "/Gallery/" + imageName);
+            string fullPath2 = (hostEnvironment.WebRootPath  + "/Images/Uploads/Products/" + id.ToString() + "/Gallery/Thumbs/" + imageName);
+
+            if (System.IO.File.Exists(fullPath1))
+            {
+                System.IO.File.Delete(fullPath1);
+            }
+                
+            if (System.IO.File.Exists(fullPath2))
+            {
+                System.IO.File.Delete(fullPath2);
+            }
+                
         }
     }
 }

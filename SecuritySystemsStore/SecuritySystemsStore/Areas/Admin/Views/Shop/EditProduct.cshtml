@@ -37,7 +37,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control" ></select>
+                <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -62,12 +62,93 @@
     </div>
 </div>
 
+<hr />
+@if (!Model.GalleryImages.Any())
+{
+    <h3>There are no gallery images for this product.</h3>
+}
+
+<form action="/admin/shop/SaveGalleryImages" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm">
+    <div class="fallback">
+        <input type="file" name="file" multiple="" />
+        <input type="submit" value="Upload" />
+    </div>
+</form>
+
+<br />
+<br />
+
+<div class="row">
+    @foreach (var image in Model.GalleryImages)
+    {
+        <div class="col">
+            <div class="galleryStyle">
+                <div style="width: 200px; height: 200px;">
+                    <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@image" />
+                </div>
+                <div style="text-align: center">
+                    @Html.ActionLink("Delete", "DeleteImage", "Shop", new { @class = "deleteimage btn btn-danger", data_name = image, style = "margin: 10px" })
+                    <a asp-action="DeleteImage"  asp-controller="Shop"  class ="btn btn-danger deleteimage " data_name="image" style="margin: 10px">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
 <div>
     <a asp-action="Products">Back to Products</a>
 </div>
 
+<link href="~/lib/dropzone/basic.css" rel="stylesheet" />
+<link href="~/lib/dropzone/dropzone.css" rel="stylesheet" />
+
 @section Scripts
 {
     <script src="~/Content/ShopJS/AddProductScript.js"></script>
+    <script src="~/lib/dropzone/dropzone.js"></script>
+    <script>
+
+        /* Dropzone js*/
+
+        Dropzone.options.dropzoneForm = {
+            acceptedFiles: "image/*",
+            init: function () {
+                this.on("complete",
+                    function (file) {
+                        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                            location.reload();
+                        }
+                    });
+                this.on("sending",
+                    function (file, xhr, formData) {
+                        formData.append("id",  @Model.Id);
+                    });
+            }
+        };
+
+        /*-----------------------------------------------------------*/
+
+        /* Delete gallery image */
+
+        $("a.deleteimage").click(function(e) {
+            e.preventDefault();
+
+            if (!confirm("Confirm deletion")) return false;
+
+            var $this = $(this);
+            var url = "/admin/shop/DeleteImage";
+            var imageName = $this.data("name");
+
+
+            $.post(url, { id: @Model.Id, imageName: imageName }, function (data) {
+                $this.parent().parent().parent().fadeOut("slow");
+            });
+        });
+
+
+        /*-----------------------------------------------------------*/
+
+
+    </script>
 }
 

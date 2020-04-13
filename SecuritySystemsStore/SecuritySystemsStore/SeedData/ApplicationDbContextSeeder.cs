@@ -29,7 +29,7 @@ namespace SecuritySystemsStore.SeedData
 
         private  async Task SeedUserToRolesAsync()
         {
-            var user = await userManager.FindByNameAsync("Ljubo6");
+            var user = await userManager.FindByNameAsync("Admin");
             var role = await roleManager.FindByNameAsync("Admin");
 
             var exists = this.dbContext.UserRoles.Any(x => x.UserId == user.Id && x.RoleId == role.Id);
@@ -63,7 +63,7 @@ namespace SecuritySystemsStore.SeedData
 
         private async Task SeedUsersAsync()
         {
-            var user =await userManager.FindByNameAsync("Ljubo6");
+            var user =await userManager.FindByNameAsync("Admin");
             if (user != null)
             {
                 return;
@@ -71,11 +71,11 @@ namespace SecuritySystemsStore.SeedData
 
             var result = await userManager.CreateAsync(new IdentityUser
             {
-                UserName = "Ljubo6",
-                Email = "Ljubo6@abv.bg",
+                UserName = "Admin",
+                Email = "admin@info.com",
                 EmailConfirmed = true,
             },
-            "Ljubo3538");
+            "pass");
 
         }
     }
