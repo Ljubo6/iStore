@@ -87,8 +87,7 @@
                     <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@image" />
                 </div>
                 <div style="text-align: center">
-                    @Html.ActionLink("Delete", "DeleteImage", "Shop", new { @class = "deleteimage btn btn-danger", data_name = image, style = "margin: 10px" })
-                    <a asp-action="DeleteImage"  asp-controller="Shop"  class ="btn btn-danger deleteimage " data_name="image" style="margin: 10px">Delete</a>
+                    <a asp-action="DeleteImage"  asp-controller="Shop"  class ="btn btn-danger deleteimage " data-name="@image" style="margin: 10px">Delete</a>
                 </div>
             </div>
         </div>

@@ -24,15 +24,15 @@ namespace SecuritySystemsStore.SeedData
 
         private async Task SeedAccessControlSystemsAsync()
         {
-            var category = this.dbContext.Categories.FirstOrDefault(x => x.Name == "Access");
+            var category = this.dbContext.Categories.FirstOrDefault(x => x.Name == "Access Control");
             if (category != null)
             {
                 return;
             }
             await dbContext.Categories.AddAsync(new Category
             {
-                Name = "Access",
-                Slug = "access",
+                Name = "Access Control",
+                Slug = "access-control",
                 Sorting = 3
             });
             await this.dbContext.SaveChangesAsync();
@@ -40,15 +40,15 @@ namespace SecuritySystemsStore.SeedData
 
         private async Task SeedFireSystemsAsync()
         {
-            var category = this.dbContext.Categories.FirstOrDefault(x => x.Name == "Fire");
+            var category = this.dbContext.Categories.FirstOrDefault(x => x.Name == "Fire Systems");
             if (category != null)
             {
                 return;
             }
             await dbContext.Categories.AddAsync(new Category
             {
-                Name = "Fire",
-                Slug = "fire",
+                Name = "Fire Systems",
+                Slug = "fire-systems",
                 Sorting = 2
             });
             await this.dbContext.SaveChangesAsync();
@@ -56,15 +56,15 @@ namespace SecuritySystemsStore.SeedData
 
         private async Task SeedSecyritySystemsAsync()
         {
-            var category = this.dbContext.Categories.FirstOrDefault(x => x.Name == "Security");
+            var category = this.dbContext.Categories.FirstOrDefault(x => x.Name == "Alarm Systems");
             if (category != null)
             {
                 return;
             }
             await dbContext.Categories.AddAsync(new Category
             {
-                Name = "Security",
-                Slug = "security",
+                Name = "Alarm Systems",
+                Slug = "alarm-systems",
                 Sorting = 1
             });
             await this.dbContext.SaveChangesAsync();
